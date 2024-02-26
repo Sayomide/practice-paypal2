@@ -1,0 +1,21 @@
+{
+  "name": "paypal2",
+  "version": "1.0.0",
+  "description": "paypal standard",
+  "type": "module",
+  "main": "client/index.js",
+  "scripts": {
+    "test": "server.js",
+    "start": "nodemon server.js",
+    "format": "npx prettier --write **/*.{js,md}",
+    "format:check": "npx prettier --check **/*.{js,md}",
+    "lint": "npx eslint server/*.js --env=node && npx eslint client/*.js --env=browser"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  }
+}

@@ -2,14 +2,25 @@ import express from "express";
 import fetch from "node-fetch";
 import "dotenv/config";
 import path from "path";
+import cors from 'cors';
 
 const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PORT = 8000 } = process.env;
 const base = "https://api-m.sandbox.paypal.com";
 const app = express();
 
 app.use(express.static("client"));
-
 app.use(express.json());
+app.use(cors({
+    origin: "*",
+  }));
+
+/*
+const corsOptions = {
+  origin: ['http://localhost:8158/checkout.html', 'http://localhost:8158'], // List of allowed origins
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
+*/
 
 const generateAccessToken = async () => {
   try {
@@ -37,11 +48,12 @@ const generateAccessToken = async () => {
 /**
  * Create an order to start the transaction.
  */
-const createOrder = async (cart) => {
+const createOrder = async (thegoods, total2) => {
   // use the cart information passed from the front-end to calculate the purchase unit details
   console.log(
     "shopping cart information passed from the frontend createOrder() callback:",
-    cart,
+    thegoods,
+    total2
   );
 
   const accessToken = await generateAccessToken();
@@ -52,7 +64,7 @@ const createOrder = async (cart) => {
       {
         amount: {
           currency_code: "USD",
-          value: "100.00",
+          value: Number(total2),
         },
       },
     ],
@@ -105,9 +117,11 @@ async function handleResponse(response) {
 
 app.post("/api/orders", async (req, res) => {
   try {
-    // use the cart information passed from the front-end to calculate the order amount detals
-    const { cart } = req.body;
-    const { jsonResponse, httpStatusCode } = await createOrder(cart);
+    // use the cart information passed from the front-end to calculate the order amount dconst
+// I didn't need to destruction the thegoods with two xurly brackets since its from frontend and not default
+    const { thegoods, total2 }  = req.body;
+    
+    const { jsonResponse, httpStatusCode } = await createOrder( thegoods, total2 );
     res.status(httpStatusCode).json(jsonResponse);
   } catch (error) {
     console.error("Failed to create order:", error);
@@ -134,3 +148,4 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Node server listening at http://localhost:${PORT}/`);
 });
+

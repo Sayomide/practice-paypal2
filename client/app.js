@@ -1,5 +1,28 @@
-window.paypal
-  .Buttons({
+let thegoods =
+         [
+              {
+                id: "1",
+                name: "shirts",
+                quantity: "70",
+                price: 70
+              },
+              {
+                id: "2",
+                name: "boxers",
+                quantity: "50",
+                price: 50
+              },
+              {
+                id: "3",
+                name: "goggles",
+                quantity: "10",
+                price: 10
+              }
+            ]
+
+let total2 = thegoods.reduce((accumulator, eachgoods) => { return accumulator + eachgoods.price; }, 0);
+
+window.paypal.Buttons({
     style: {
       shape: "rect",
       layout: "vertical",
@@ -11,16 +34,8 @@ window.paypal
           headers: {
             "Content-Type": "application/json",
           },
-          // use the "body" param to optionally pass additional order information
           // like product ids and quantities
-          body: JSON.stringify({
-            cart: [
-              {
-                id: "shirts",
-                quantity: "70",
-              },
-            ],
-          }),
+          body: JSON.stringify({ thegoods, total2 }),
         });
 
         const orderData = await response.json();
@@ -55,7 +70,7 @@ const response = await fetch(`/api/orders/${data.orderID}/capture`, {
 
         const errorDetail = orderData?.details?.[0];
 
-        if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
+     if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
           // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
           return actions.restart();
         } else if (errorDetail) {
@@ -86,9 +101,22 @@ const response = await fetch(`/api/orders/${data.orderID}/capture`, {
     },
   })
   .render("#paypal-button-container");
-
 // Example function to show a result to the user. Your site's UI library can be used instead.
 function resultMessage(message) {
   const container = document.querySelector("#result-message");
   container.innerHTML = message;
 }
+/*
+body: JSON.stringify({
+            cart: [
+              {
+                id: "shirts",
+                quantity: "70",
+              },
+              {
+                id: "boxers",
+                quantity: "50",
+              },
+            ],
+          }),
+*/

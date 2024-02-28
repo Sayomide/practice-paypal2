@@ -24,7 +24,7 @@ let total2 = thegoods.reduce((accumulator, eachgoods) => { return accumulator + 
 
 window.paypal.Buttons({
     style: {
-      shape: "rect",
+      shape: "pill",
       layout: "vertical",
     },
     async createOrder() {
@@ -43,8 +43,8 @@ window.paypal.Buttons({
         if (orderData.id) {
           return orderData.id;
         } else {
-          const errorDetail = orderData?.details?.[0];
-          const errorMessage = errorDetail
+         const errorDetail = orderData?.details?.[0];
+         const errorMessage = errorDetail
             ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
             : JSON.stringify(orderData);
 

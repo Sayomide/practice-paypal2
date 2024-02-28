@@ -4,14 +4,14 @@ import "dotenv/config";
 import path from "path";
 import cors from 'cors';
 
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PORT = 8000 } = process.env;
+const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PORT = 3000 } = process.env;
 const base = "https://api-m.sandbox.paypal.com";
 const app = express();
 
 app.use(express.static("client"));
 app.use(express.json());
 app.use(cors({
-    origin: "*",
+    origin: "*"
   }));
 
 /*
@@ -22,6 +22,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 */
 
+// to generateAccessToken
 const generateAccessToken = async () => {
   try {
     if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
@@ -45,11 +46,9 @@ const generateAccessToken = async () => {
   }
 };
 
-/**
- * Create an order to start the transaction.
- */
+// createOrder to start the transaction
 const createOrder = async (thegoods, total2) => {
-  // use the cart information passed from the front-end to calculate the purchase unit details
+  // console and calculate amount from frontend 
   console.log(
     "shopping cart information passed from the frontend createOrder() callback:",
     thegoods,
@@ -74,7 +73,7 @@ const createOrder = async (thegoods, total2) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
-      // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
+ // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
     },
     method: "POST",
     body: JSON.stringify(payload),
@@ -117,8 +116,7 @@ async function handleResponse(response) {
 
 app.post("/api/orders", async (req, res) => {
   try {
-    // use the cart information passed from the front-end to calculate the order amount dconst
-// I didn't need to destruction the thegoods with two xurly brackets since its from frontend and not default
+ // use the cart information passed from the frontend
     const { thegoods, total2 }  = req.body;
     
     const { jsonResponse, httpStatusCode } = await createOrder( thegoods, total2 );
